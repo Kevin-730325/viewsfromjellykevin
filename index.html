@@ -677,6 +677,8 @@ nav .links #navContact.on{ color:var(--rec); }
 @media(max-width:600px){.page-inner{padding:100px 6vw 80px}.grid{grid-template-columns:1fr}.collection-nav{gap:6px 16px}.featured-header{display:block}.featured-header>a{display:inline-block;margin-top:14px}.roleList li{font-size:30px}.roleList li>span{font-size:8px}.tile .cap{font-size:10px}nav .links{gap:14px}nav .logo{font-size:18px}nav .tc{display:none}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
+.project-link{display:inline-flex;align-items:center;min-height:44px;margin:6px 0 12px;font:11px var(--font-mono);letter-spacing:.09em;color:var(--bone);text-decoration:none;border-bottom:1px solid #6c5143;transition:color .2s}
+.project-link:hover,.project-link:focus-visible{color:var(--rec);border-color:var(--rec)}
 </style>
 </head>
 <body>
@@ -955,9 +957,9 @@ const WORKS = {
     no:"03", title:"AIGC ｜ Shortfilm",
     lede:"STORIES THAT FIT INSIDE TEN MINUTES AND STAY LONGER.",
     items:[
-      { kind:"video", yt:"YuxI05lHLRk", poster:"king-card-magic.webp", cap:"KING CARD", meta:"KLING 4.0 · SHORT FILM" },
-      { kind:"video", yt:"nlM7kL3kv_Y", poster:"yt-nlM7kL3kv_Y.jpg", cap:"YOU CALL THE SHOTS", meta:"KLING 4.0 · PRODUCT FILM" },
-      { kind:"video", yt:"w3397LF5MAc", poster:"the-beat-drummer.webp", cap:"THE BEAT", meta:"KLING 4.0 · SHORT FILM" },
+      { kind:"video", yt:"YuxI05lHLRk", project:"king-card.html", poster:"king-card-magic.webp", cap:"KING CARD", meta:"KLING 4.0 · SHORT FILM" },
+      { kind:"video", yt:"nlM7kL3kv_Y", project:"you-call-the-shots.html", poster:"yt-nlM7kL3kv_Y.jpg", cap:"YOU CALL THE SHOTS", meta:"KLING 4.0 · PRODUCT FILM" },
+      { kind:"video", yt:"w3397LF5MAc", project:"the-beat.html", poster:"the-beat-drummer.webp", cap:"THE BEAT", meta:"KLING 4.0 · SHORT FILM" },
       { kind:"video", yt:"DjQsu5bd_XU", poster:"yt-DjQsu5bd_XU.jpg", cap:"SHORT FILM", meta:"FROM THE ARCHIVE" },
       { kind:"photo", src:"film.jpg", cap:"STILL — THE CLOWN" },
     ]
@@ -967,13 +969,16 @@ const WORKS = {
     lede:"PRODUCT DEMOS, BRAND FILMS & IMAGINED WORLDS. SELECTED MOTION AND AIGC STILLS.",
     featured:true,
     items:[
-      { kind:"photo", src:"king-card-magic.webp", cap:"KING CARD — THE MAGICIAN", meta:"KLING 4.0 · FILM STILL" },
-      { kind:"photo", src:"yt-nlM7kL3kv_Y.jpg", cap:"YOU CALL THE SHOTS", meta:"KLING 4.0 · OFFICIAL KEY VISUAL" },
-      { kind:"photo", src:"the-beat-drummer.webp", cap:"THE BEAT — FIND YOUR RHYTHM", meta:"KLING 4.0 · FILM STILL" },
-      { kind:"photo", src:"king-card-descent.webp", cap:"KING CARD — PAPER CITY", meta:"KLING 4.0 · FILM STILL" },
-      { kind:"photo", src:"the-beat-color.webp", cap:"THE BEAT — A CITY TRANSFORMED", meta:"KLING 4.0 · VISUAL DEVELOPMENT" },
-      { kind:"photo", src:"king-card-origami.webp", cap:"KING CARD — THE RED BIRD", meta:"KLING 4.0 · FILM STILL" },
-      { kind:"photo", src:"the-beat-portrait.webp", cap:"THE BEAT — A MOMENT OF STILLNESS", meta:"KLING 4.0 · FILM STILL" },
+      { kind:"photo", src:"king-card-magic.webp", project:"king-card.html", cap:"KING CARD — THE MAGICIAN", meta:"KLING 4.0 · FILM STILL" },
+      { kind:"photo", src:"yt-nlM7kL3kv_Y.jpg", project:"you-call-the-shots.html", cap:"YOU CALL THE SHOTS", meta:"KLING 4.0 · OFFICIAL KEY VISUAL" },
+      { kind:"photo", src:"the-beat-drummer.webp", project:"the-beat.html", cap:"THE BEAT — FIND YOUR RHYTHM", meta:"KLING 4.0 · FILM STILL" },
+      { kind:"photo", src:"king-card-descent.webp", project:"king-card.html", cap:"KING CARD — PAPER CITY", meta:"KLING 4.0 · FILM STILL" },
+      { kind:"photo", src:"the-beat-color.webp", project:"the-beat.html", cap:"THE BEAT — A CITY TRANSFORMED", meta:"KLING 4.0 · VISUAL DEVELOPMENT" },
+      { kind:"photo", src:"king-card-origami.webp", project:"king-card.html", cap:"KING CARD — THE RED BIRD", meta:"KLING 4.0 · FILM STILL" },
+      { kind:"photo", src:"the-beat-portrait.webp", project:"the-beat.html", cap:"THE BEAT — A MOMENT OF STILLNESS", meta:"KLING 4.0 · FILM STILL" },
+      { kind:"photo", src:"beat-still-03.webp", project:"the-beat.html", cap:"THE BEAT — REALITY, REWRITTEN", meta:"KLING 4.0 · FILM STILL" },
+      { kind:"photo", src:"beat-still-12.webp", project:"the-beat.html", cap:"THE BEAT — NO RULES OF GRAVITY", meta:"KLING 4.0 · FILM STILL" },
+      { kind:"photo", src:"beat-still-02.webp", project:"the-beat.html", cap:"THE BEAT — A RHYTHM AROUND THE WORLD", meta:"KLING 4.0 · FILM STILL" },
       { kind:"photo", src:"kling-campus.webp", cap:"KLING — CAMPUS WORLD", meta:"AIGC · ENVIRONMENT DESIGN" },
       { kind:"video", yt:"M4VuIQlQ83Y", poster:"yt-M4VuIQlQ83Y.jpg", cap:"RED CELL RONIN — THE SERIES" },
       { kind:"video", yt:"KvmCTTSpzv8", poster:"yt-KvmCTTSpzv8.jpg", cap:"ESCAPE FROM DUCKOV" },
@@ -1316,6 +1321,7 @@ function openGallery(cat){
     tile.appendChild(media);
     if(it.cap){const caption=document.createElement('span');caption.className='cap';caption.textContent=it.cap;tile.appendChild(caption);}
     if(it.meta){const meta=document.createElement('span');meta.className='caption-meta';meta.textContent=it.meta;tile.appendChild(meta);}
+    if(it.project){const detail=document.createElement('a');detail.className='project-link';detail.href=it.project;detail.textContent='EXPLORE PROJECT ↗';detail.setAttribute('aria-label','Explore '+it.cap+' project');tile.appendChild(detail);}
     grid.appendChild(tile);
   });
   gallery.classList.add('open');gallery.setAttribute('aria-hidden','false');gallery.scrollTop=0;navWorks.classList.add('active');layoutGallery();
@@ -1414,7 +1420,11 @@ const BADGE_PHOTO = "studio-image-1.jpg";
   });
   addEventListener('resize', ()=>{ if(open) place(); });
 })();
-addEventListener('keydown', e=>{ if(e.key==='Escape') closePages(); });
+addEventListener('keydown', e=>{ if(e.key==='Escape' && !lightbox.open) closePages(); });
+// Direct links from project pages return to the selected collection.
+function restoreCollection(){const cat=location.hash.slice(1);if(WORKS[cat])openGallery(cat);}
+addEventListener('hashchange',restoreCollection);
+restoreCollection();
 </script>
 </body>
 </html>
