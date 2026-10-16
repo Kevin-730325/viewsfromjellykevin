@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JellyKevin — AIGC Director &amp; Filmmaker</title>
 <meta name="description" content="JellyKevin — AIGC director, screenwriter, brand operations specialist and videographer. Multimodal product demos, brand films and cinematic storytelling.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="fonts.css">
 <style>
 /* ============================================================
    JELLYKEVIN — THE RED STUDIO
@@ -260,8 +260,8 @@ body.in-studio .frame.f-travel{ transform:perspective(900px) rotateY(-34deg) tra
    面板 93% 不透明：画室会在首页背景里隐隐透出，LCD 窗口内全亮。 */
 #shroud{ position:fixed; inset:0; z-index:10; pointer-events:none; }
 #shroud .sp{ position:absolute; background:rgba(9,5,3,.45);
-  -webkit-backdrop-filter:blur(9px) saturate(1.05);
-  backdrop-filter:blur(9px) saturate(1.05);
+  /* Avoid repainting four full-screen backdrop filters during camera motion. */
+  background:rgba(9,5,3,.64);
   will-change:transform; }
 #shroud .sp.t{ left:0; right:0; top:0; height:calc(50vh - var(--screenH)/2);
   transform-origin:50% calc(100% + var(--screenH)/2); }
@@ -679,6 +679,10 @@ nav .links #navContact.on{ color:var(--rec); }
 
 .project-link{display:inline-flex;align-items:center;min-height:44px;margin:6px 0 12px;font:11px var(--font-mono);letter-spacing:.09em;color:var(--bone);text-decoration:none;border-bottom:1px solid #6c5143;transition:color .2s}
 .project-link:hover,.project-link:focus-visible{color:var(--rec);border-color:var(--rec)}
+/* Suspend the covered studio while reading a collection or About. */
+body.page-open #room,body.page-open #shroud,body.page-open #camWrap,
+body.page-open .pfx,body.page-open #hero,body.page-open #bigword,body.page-open #meta{visibility:hidden}
+body.page-open .mote,body.page-open .pfx i{animation-play-state:paused}
 </style>
 </head>
 <body>
@@ -1028,17 +1032,18 @@ const WORKS = {
 };
 
 /* ---------- timecode ---------- */
-let frames = 0;
+const timecodeStart = performance.now();
 const tcEls = [document.getElementById('tc'), document.getElementById('hudTc')];
 setInterval(()=>{
-  frames++;
+  if(document.hidden || document.body.classList.contains('page-open')) return;
+  const frames = Math.floor((performance.now()-timecodeStart)*24/1000);
   const f = frames % 24,
         s = Math.floor(frames/24) % 60,
         m = Math.floor(frames/1440) % 60,
         h = Math.floor(frames/86400);
   const t = [h,m,s,f].map(n=>String(n).padStart(2,'0')).join(':');
   tcEls.forEach(el=>{ if(el) el.textContent = t; });
-}, 1000/24);
+}, 100);
 
 /* ---------- AI room video + hotspots ---------- */
 const room = document.getElementById('room');
@@ -1054,13 +1059,12 @@ if(ROOM_VIDEO){
   v.muted = true;
   v.setAttribute('muted','');          /* Safari 需要属性形式 */
   v.loop = false;                      /* 只播一遍，结束定格 */
-  v.preload = 'auto';
+  v.preload = 'none';
   v.playsInline = true;
   v.setAttribute('playsinline','');
   v.addEventListener('playing', ()=> v.classList.add('live'));
   room.prepend(v);
   room.prepend(still);                 /* still 在下、video 在上 */
-  try{ v.load(); }catch(e){}
   room.classList.add('has-video');
   document.body.classList.add('has-video-mode');
 
@@ -1166,6 +1170,7 @@ function enterStudio(){
       const done = ()=>{
         if(document.body.classList.contains('in-studio')) return;
         if(still) still.src = ENDING_DATA;   /* 定格：切到内嵌尾帧 */
+        vid.pause();
         vid.classList.remove('live');
         document.body.classList.add('in-studio','frozen');
       };
@@ -1204,7 +1209,7 @@ if(!reduce && finePtr){
   const bigword = document.getElementById('bigword');
   const blobs = [...document.querySelectorAll('.pfx')];
   addEventListener('mousemove', e=>{
-    if(inStudio) return;
+    if(inStudio || document.hidden || document.body.classList.contains('page-open')) return;
     const x = (e.clientX/innerWidth - .5), y = (e.clientY/innerHeight - .5);
     const rot = `perspective(900px) rotateX(${(-y*3).toFixed(2)}deg) rotateY(${(x*4).toFixed(2)}deg)`;
     shroudPanels.forEach(p=> p.style.transform = rot);
@@ -1223,20 +1228,21 @@ if(!reduce && finePtr){
 if(!reduce && finePtr){
   let tx = 0, ty = 0, cx = 0, cy = 0, swayOn = false;
   addEventListener('mousemove', e=>{
-    if(!document.body.classList.contains('frozen')) return;
+    if(!document.body.classList.contains('frozen') || document.hidden || document.body.classList.contains('page-open')) return;
     tx = (e.clientX/innerWidth - .5);
     ty = (e.clientY/innerHeight - .5);
     if(!swayOn){ swayOn = true; requestAnimationFrame(sway); }
   });
   function sway(){
-    if(!document.body.classList.contains('frozen')){ swayOn = false; return; }
+    if(!document.body.classList.contains('frozen') || document.hidden || document.body.classList.contains('page-open')){ swayOn = false; return; }
     cx += (tx - cx) * .055;              /* 缓动追踪，像稳定器 */
     cy += (ty - cy) * .055;
     room.style.transform =
       `perspective(1200px) scale(1.07) rotateY(${(cx*3.2).toFixed(3)}deg) rotateX(${(-cy*2.2).toFixed(3)}deg)`;
     const hsw = document.getElementById('hotspots');
     if(hsw) hsw.style.transform = `translate(${(-cx*26).toFixed(1)}px, ${(-cy*18).toFixed(1)}px)`; /* 标签层差速 → 深度感 */
-    requestAnimationFrame(sway);
+    if(Math.abs(tx-cx)+Math.abs(ty-cy)>.001) requestAnimationFrame(sway);
+    else swayOn = false;
   }
 }
 
@@ -1244,7 +1250,7 @@ if(!reduce && finePtr){
 if(!reduce && matchMedia('(pointer:fine)').matches){
   const layers = [...document.querySelectorAll('.layer')];
   addEventListener('mousemove', e=>{
-    if(!document.body.classList.contains('in-studio')) return;
+    if(!document.body.classList.contains('in-studio') || document.hidden || document.body.classList.contains('page-open')) return;
     const x = (e.clientX/innerWidth - .5), y = (e.clientY/innerHeight - .5);
     layers.forEach(l=>{
       const d = +l.dataset.depth;
@@ -1260,6 +1266,7 @@ const navWorks = document.getElementById('navWorks');
 const navAbout = document.getElementById('navAbout');
 
 function closePages(){
+  document.body.classList.remove('page-open');
   document.querySelectorAll('#gallery video').forEach(v=>v.pause());
   [gallery,about].forEach(p=>{ p.classList.remove('open'); p.setAttribute('aria-hidden','true'); });
   [navWorks,navAbout].forEach(b=>b.classList.remove('active'));
@@ -1324,6 +1331,8 @@ function openGallery(cat){
     if(it.project){const detail=document.createElement('a');detail.className='project-link';detail.href=it.project;detail.textContent='EXPLORE PROJECT ↗';detail.setAttribute('aria-label','Explore '+it.cap+' project');tile.appendChild(detail);}
     grid.appendChild(tile);
   });
+  document.body.classList.add('page-open');
+  room.querySelector('video')?.pause();
   gallery.classList.add('open');gallery.setAttribute('aria-hidden','false');gallery.scrollTop=0;navWorks.classList.add('active');layoutGallery();
 }
 document.querySelectorAll('[data-gallery]').forEach(button=>button.addEventListener('click',()=>openGallery(button.dataset.gallery)));
@@ -1338,6 +1347,8 @@ navWorks.addEventListener('click', ()=>{
 });
 navAbout.addEventListener('click', ()=>{
   closePages();
+  document.body.classList.add('page-open');
+  room.querySelector('video')?.pause();
   about.classList.add('open'); about.setAttribute('aria-hidden','false');
   about.scrollTop = 0; navAbout.classList.add('active');
 });

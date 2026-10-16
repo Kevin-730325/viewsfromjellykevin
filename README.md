@@ -19,3 +19,9 @@ Open `index.html` locally, or serve the folder with any static web server. GitHu
 - `index.html#film` links directly to the film collection.
 
 Project stills use WebP, explicit image dimensions and lazy loading. The two workflow boards retain their original resolution for full-size viewing.
+
+## Hosting
+
+Production: https://www.jellykevin.com (Vercel project `jellykevin/jellykevin-portfolio`). The GitHub `main` branch deploys automatically.
+
+Fonts are served locally under their included SIL Open Font Licenses. The studio video loads on interaction; covered and idle animation work is suspended. Vercel serves the repository root as a static site, with browser caching for media.
